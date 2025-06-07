@@ -15,6 +15,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('experiments', ExperimentController::class)
         ->only(['store']);
     Route::resource('experiments.nodes', NodeController::class)
-        ->only(['store', 'update'])
-        ->shallow();
+        ->scoped([
+            'node' => 'name',
+        ])
+        ->only(['store', 'update']);
 });

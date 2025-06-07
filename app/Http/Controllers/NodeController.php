@@ -24,12 +24,12 @@ class NodeController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $node = $experiment->nodes()->create($data);
+        $experiment->nodes()->create($data);
 
-        return response()->json(['id' => $node->id], Response::HTTP_CREATED);
+        return response('success', Response::HTTP_CREATED);
     }
 
-    public function update(Request $request, Node $node)
+    public function update(Request $request, Experiment $_experiment, Node $node)
     {
         Gate::authorize('update nodes');
 
