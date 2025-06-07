@@ -30,8 +30,8 @@ class ExperimentController extends Controller
         for ($i = 0; $i < $nodesAmount; $i++) {
             for ($j = 0; $j < $instancesPerNode; $j++) {
                 $instanceName = $i <= 9
-                    ? "fledger-0$i-$j"
-                    : "fledger-$i-$j";
+                    ? "fledger-n0$i-$j"
+                    : "fledger-n$i-$j";
                 $experiment->nodes()->create([
                     'name' => $instanceName
                 ]);
