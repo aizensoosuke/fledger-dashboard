@@ -29,16 +29,17 @@ class NodeController extends Controller
         return response('success', Response::HTTP_CREATED);
     }
 
-    public function update(Request $request, Experiment $_experiment, Node $node)
+    public function update(Request $request, Experiment $experiment, Node $node)
     {
         Gate::authorize('update nodes');
 
         $data = $request->validate([
-            'pages' => 'array',
-            'pages.*' => 'string|max:255',
+            'pages' => 'string|max:16384|nullable',
         ]);
 
-        $node->update($data);
+        $node->update([
+            'pages' => str($data['pages'])->split('/,/'),
+        ]);
 
         return response('success', Response::HTTP_OK);
 
