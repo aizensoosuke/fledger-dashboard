@@ -6,7 +6,10 @@ use App\Filament\Resources\ExperimentResource\Pages;
 use App\Filament\Resources\ExperimentResource\Widgets\PagesPropagationChart;
 use App\Models\Experiment;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -28,12 +31,28 @@ class ExperimentResource extends Resource
 
     protected static ?string $slug = 'experiments';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rocket-launch';
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\EditExperiment::class,
+            Pages\ViewMetrics::class,
+            Pages\ManageNodes::class,
+        ]);
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                TextInput::make('id')
+                    ->label('Experiment ID')
+                    ->disabled(),
+                TextInput::make('name')
+                    ->disabled(),
             ]);
     }
 
@@ -50,7 +69,8 @@ class ExperimentResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn ($record) => static::getUrl('metrics', ['record' => $record])),
                 DeleteAction::make(),
                 RestoreAction::make(),
                 ForceDeleteAction::make(),
@@ -61,7 +81,8 @@ class ExperimentResource extends Resource
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getPages(): array
@@ -70,6 +91,9 @@ class ExperimentResource extends Resource
             'index' => Pages\ListExperiments::route('/'),
             'create' => Pages\CreateExperiment::route('/create'),
             'edit' => Pages\EditExperiment::route('/{record}/edit'),
+
+            'metrics' => Pages\ViewMetrics::route('/{record}/metrics'),
+            'nodes' => Pages\ManageNodes::route('/{record}/nodes'),
         ];
     }
 

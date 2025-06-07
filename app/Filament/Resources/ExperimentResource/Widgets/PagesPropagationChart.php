@@ -12,6 +12,8 @@ class PagesPropagationChart extends ChartWidget
 
     public ?Experiment $record = null;
 
+    protected int | string | array $columnSpan = 'full';
+
     protected function getData(): array
     {
         $experiment = $this->record;
