@@ -40,4 +40,14 @@ class ExperimentController extends Controller
 
         return response()->json(['id' => $experiment->id], 201);
     }
+
+    function end(Request $request, Experiment $experiment)
+    {
+        Gate::authorize('end experiments');
+
+        $experiment->ended_at = now();
+        $experiment->save();
+
+        return response('success', 200);
+    }
 }

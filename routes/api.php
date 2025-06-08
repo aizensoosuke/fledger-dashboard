@@ -13,11 +13,15 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     }
 
+    Route::get('/experiments/{experiment}/end', [ExperimentController::class, 'end'])
+        ->name('experiments.end');
     Route::resource('experiments', ExperimentController::class)
         ->only(['store']);
+
     Route::resource('experiments.nodes', NodeController::class)
         ->shallow()
         ->only(['store', 'update']);
+
     Route::resource('nodes.data-points', DataPointController::class)
         ->shallow()
         ->only(['store']);

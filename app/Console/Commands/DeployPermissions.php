@@ -27,6 +27,7 @@ class DeployPermissions extends Command
 
         $customPermissions = collect([
             'access filament',
+            'end experiments'
         ]);
 
         $adminExceptions = collect([
@@ -39,6 +40,8 @@ class DeployPermissions extends Command
             'create data points',
 
             'update nodes',
+
+            'end experiments',
         ]);
 
         $base = collect([
