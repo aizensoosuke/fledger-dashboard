@@ -13,6 +13,8 @@ class SuccessVTimeoutChart extends ChartWidget
 
     public ?Experiment $record = null;
 
+    protected int | string | array $columnSpan = 1;
+
     protected function getData(): array
     {
         $experiment = $this->record;

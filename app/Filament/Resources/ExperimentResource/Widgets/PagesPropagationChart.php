@@ -12,7 +12,7 @@ class PagesPropagationChart extends ChartWidget
 
     public ?Experiment $record = null;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 2;
 
     protected function getData(): array
     {

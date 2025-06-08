@@ -28,6 +28,11 @@ class ViewTimelessSeries extends ViewRecord
         return $form->schema([]);
     }
 
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
+    }
+
     protected function getHeaderWidgets(): array
     {
         $timelessSeriesName = TimelessDataPoint::whereIn('node_id', $this->record->nodes->pluck('id'))

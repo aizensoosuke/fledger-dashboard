@@ -14,6 +14,11 @@ class ViewMetrics extends ViewRecord
 
     protected static ?string $title = 'Metrics';
 
+    public function getHeaderWidgetsColumns(): int|string|array
+    {
+        return 4;
+    }
+
     public function form(Form $form): Form
     {
         return $form->schema([]);
@@ -23,6 +28,10 @@ class ViewMetrics extends ViewRecord
     {
         return [
             ExperimentResource\Widgets\SuccessVTimeoutChart::make(),
+            ExperimentResource\Widgets\TimelessSeriesChart::make([
+                'timelessSeriesName' => 'success',
+                'columnSpan' => 2,
+            ]),
             ExperimentResource\Widgets\PagesPropagationChart::make(),
         ];
     }
