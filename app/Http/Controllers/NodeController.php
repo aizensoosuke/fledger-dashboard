@@ -37,6 +37,7 @@ class NodeController extends Controller
             'pages' => 'string|max:16384|nullable',
             'amount_flo_value_sent' => 'integer|min:0|nullable',
             'amount_request_flo_metas_received' => 'integer|min:0|nullable',
+            'status' => 'string|in:active,success,timeout|nullable',
         ]);
 
         if (isset($data['pages'])) {
@@ -49,6 +50,10 @@ class NodeController extends Controller
 
         if (isset($data['amount_flo_value_sent'])) {
             $node->amount_flo_value_sent = $data['amount_flo_value_sent'];
+        }
+
+        if (isset($data['status'])) {
+            $node->status = $data['status'];
         }
 
         $node->save();

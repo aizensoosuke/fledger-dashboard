@@ -11,6 +11,10 @@ class Node extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_SUCCESS = 'success';
+    public const STATUS_TIMEOUT = 'timeout';
+
     protected $fillable = [
         'name',
         'pages',

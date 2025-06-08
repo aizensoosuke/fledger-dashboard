@@ -6,6 +6,7 @@ use App\Filament\Resources\ExperimentResource\Pages;
 use App\Filament\Resources\ExperimentResource\Widgets\FloValueSentChart;
 use App\Filament\Resources\ExperimentResource\Widgets\PagesPropagationChart;
 use App\Filament\Resources\ExperimentResource\Widgets\RequestFloMetasChart;
+use App\Filament\Resources\ExperimentResource\Widgets\SuccessVTimeoutChart;
 use App\Models\Experiment;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
@@ -115,6 +116,7 @@ class ExperimentResource extends Resource
     public static function getWidgets(): array
     {
         return [
+            SuccessVTimeoutChart::class,
             PagesPropagationChart::class,
             RequestFloMetasChart::class,
             FloValueSentChart::class,

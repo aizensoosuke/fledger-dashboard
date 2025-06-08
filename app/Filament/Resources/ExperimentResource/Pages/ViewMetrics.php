@@ -29,6 +29,7 @@ class ViewMetrics extends ViewRecord
     protected function getHeaderWidgets(): array
     {
         return [
+            ExperimentResource\Widgets\SuccessVTimeoutChart::make(),
             ExperimentResource\Widgets\PagesPropagationChart::make(),
             ExperimentResource\Widgets\RequestFloMetasChart::make(),
             ExperimentResource\Widgets\FloValueSentChart::make(),
