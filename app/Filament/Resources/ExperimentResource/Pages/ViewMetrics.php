@@ -30,6 +30,8 @@ class ViewMetrics extends ViewRecord
     {
         return [
             ExperimentResource\Widgets\PagesPropagationChart::make(),
+            ExperimentResource\Widgets\RequestFloMetasChart::make(),
+            ExperimentResource\Widgets\FloValueSentChart::make(),
         ];
     }
 }

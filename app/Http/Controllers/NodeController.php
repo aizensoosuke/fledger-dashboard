@@ -35,11 +35,23 @@ class NodeController extends Controller
 
         $data = $request->validate([
             'pages' => 'string|max:16384|nullable',
+            'amount_flo_value_sent' => 'integer|min:0|nullable',
+            'amount_request_flo_metas_received' => 'integer|min:0|nullable',
         ]);
 
-        $node->update([
-            'pages' => str($data['pages'])->split('/,/'),
-        ]);
+        if (isset($data['pages'])) {
+            $node->pages = str($data['pages'])->split('/,/');
+        }
+
+        if (isset($data['amount_request_flo_metas_received'])) {
+            $node->amount_request_flo_metas_received = $data['amount_request_flo_metas_received'];
+        }
+
+        if (isset($data['amount_flo_value_sent'])) {
+            $node->amount_flo_value_sent = $data['amount_flo_value_sent'];
+        }
+
+        $node->save();
 
         return response('success', Response::HTTP_OK);
 

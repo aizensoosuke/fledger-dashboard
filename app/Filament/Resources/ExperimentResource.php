@@ -3,7 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExperimentResource\Pages;
+use App\Filament\Resources\ExperimentResource\Widgets\FloValueSentChart;
 use App\Filament\Resources\ExperimentResource\Widgets\PagesPropagationChart;
+use App\Filament\Resources\ExperimentResource\Widgets\RequestFloMetasChart;
 use App\Models\Experiment;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
@@ -114,6 +116,8 @@ class ExperimentResource extends Resource
     {
         return [
             PagesPropagationChart::class,
+            RequestFloMetasChart::class,
+            FloValueSentChart::class,
         ];
     }
 }
