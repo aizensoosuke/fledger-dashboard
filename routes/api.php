@@ -3,6 +3,7 @@
 use App\Http\Controllers\DataPointController;
 use App\Http\Controllers\ExperimentController;
 use App\Http\Controllers\NodeController;
+use App\Http\Controllers\TimelessDataPointController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ->only(['store', 'update']);
 
     Route::resource('nodes.data-points', DataPointController::class)
+        ->shallow()
+        ->only(['store']);
+
+    Route::resource('nodes.timeless-data-points', TimelessDataPointController::class)
         ->shallow()
         ->only(['store']);
 });

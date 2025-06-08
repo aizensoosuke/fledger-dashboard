@@ -37,4 +37,9 @@ class Node extends Model
     {
         return $this->hasMany(DataPoint::class);
     }
+
+    public function timelessDataPoints(): HasMany
+    {
+        return $this->hasMany(TimelessDataPoint::class);
+    }
 }

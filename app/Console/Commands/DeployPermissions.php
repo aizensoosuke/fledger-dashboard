@@ -23,6 +23,7 @@ class DeployPermissions extends Command
             'experiment',
             'node',
             'data point',
+            'timeless data point',
         ]);
 
         $customPermissions = collect([
@@ -38,6 +39,7 @@ class DeployPermissions extends Command
             'create experiments',
             'create nodes',
             'create data points',
+            'create timeless data points',
 
             'update nodes',
 

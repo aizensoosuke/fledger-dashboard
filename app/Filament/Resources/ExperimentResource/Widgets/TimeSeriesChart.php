@@ -2,16 +2,20 @@
 
 namespace App\Filament\Resources\ExperimentResource\Widgets;
 
-use App\Models\DataPoint;
 use App\Models\Experiment;
 use App\Models\Node;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 
 class TimeSeriesChart extends ChartWidget
 {
+    public ?Experiment $record = null;
+
+    public ?string $timeSeriesName = null;
+
+    protected int | string | array $columnSpan = 'full';
+
     public function getHeading(): string|Htmlable|null
     {
         if ($this->timeSeriesName === null) {
@@ -20,12 +24,6 @@ class TimeSeriesChart extends ChartWidget
 
         return str($this->timeSeriesName)->replace('_', ' ')->title();
     }
-
-    public ?Experiment $record = null;
-
-    public ?string $timeSeriesName = null;
-
-    protected int | string | array $columnSpan = 'full';
 
     protected function getData(): array
     {
