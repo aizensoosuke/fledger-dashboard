@@ -18,14 +18,16 @@ class RequestFloMetasChart extends ChartWidget
     {
         $experiment = $this->record;
 
+        $nodes = $experiment->nodes()->orderBy('name')->get();
+
         return [
             'datasets' => [
                 [
                     'label' => $this->getHeading(),
-                    'data' => $experiment->nodes->map(fn ($node) => $node->amount_request_flo_metas_received),
+                    'data' => $nodes->map(fn ($node) => $node->amount_request_flo_metas_received),
                 ],
             ],
-            'labels' => $experiment->nodes->map(fn ($node) => "{$node->name}"),
+            'labels' => $nodes->map(fn ($node) => "{$node->name}"),
         ];
     }
 

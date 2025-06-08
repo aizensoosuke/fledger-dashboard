@@ -35,11 +35,13 @@ class TimeSeriesChart extends ChartWidget
         $start = Carbon::make($experiment->created_at)->floorSeconds(10);
         $end = Carbon::make($experiment?->ended_at ?? now())->ceilSeconds(10);
 
-        if ($start->diffInHours($end) > 0) {
+        if (abs($start->diffInMinutes($end)) >= 60) {
             $end = $start->copy()->addHour();
         }
 
-        $dataPoints = $experiment->nodes->flatMap(function (Node $node) use ($start) {
+        $nodes = $experiment->nodes()->inRandomOrder()->take(5)->get();
+
+        $dataPoints = $nodes->flatMap(function (Node $node) use ($start) {
             $nodeDataPoints = $node->dataPoints()
                 ->where('name', $this->timeSeriesName)
                 ->get(['time', 'value'])

@@ -18,14 +18,16 @@ class FloValueSentChart extends ChartWidget
     {
         $experiment = $this->record;
 
+        $nodes = $experiment->nodes()->orderBy('name')->get();
+
         return [
             'datasets' => [
                 [
                     'label' => $this->getHeading(),
-                    'data' => $experiment->nodes->map(fn ($node) => $node->amount_flo_value_sent),
+                    'data' => $nodes->map(fn ($node) => $node->amount_flo_value_sent),
                 ],
             ],
-            'labels' => $experiment->nodes->map(fn ($node) => "{$node->name}"),
+            'labels' => $nodes->map(fn ($node) => "{$node->name}"),
         ];
     }
 
