@@ -120,10 +120,7 @@ class ExperimentResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            SuccessVTimeoutChart::class,
-            PagesPropagationChart::class,
-            RequestFloMetasChart::class,
-            FloValueSentChart::class,
+            //
         ];
     }
 }

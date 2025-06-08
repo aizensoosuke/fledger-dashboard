@@ -46,7 +46,7 @@ host('production')
 after('deploy:prepare', 'npm:build');
 after('npm:build', 'npm:upload');
 
-//after('artisan:migrate', 'artisan:deploy:permissions');
+after('artisan:migrate', 'artisan:deploy:permissions');
 //after('artisan:deploy:permissions', 'artisan:deploy:scout');
 
 //after('deploy:success', 'horizon:restart');
