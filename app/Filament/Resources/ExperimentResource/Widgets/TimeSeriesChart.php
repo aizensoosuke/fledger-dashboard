@@ -14,8 +14,6 @@ class TimeSeriesChart extends ChartWidget
 
     public ?string $timeSeriesName = null;
 
-    protected int | string | array $columnSpan = 'full';
-
     public function getHeading(): string|Htmlable|null
     {
         if ($this->timeSeriesName === null) {

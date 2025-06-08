@@ -15,8 +15,6 @@ class TimelessSeriesChart extends ChartWidget
 
     public ?string $timelessSeriesName = null;
 
-    protected int | string | array $columnSpan = 'full';
-
     public function getHeading(): string|Htmlable|null
     {
         if ($this->timelessSeriesName === null) {
