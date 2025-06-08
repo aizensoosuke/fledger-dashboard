@@ -4,6 +4,8 @@ namespace App\Filament\Resources\ExperimentResource\Pages;
 
 use App\Filament\Resources\ExperimentResource;
 use App\Filament\Traits\HasResourceTitle;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
@@ -28,6 +30,10 @@ class ManageNodes extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([
@@ -37,7 +43,7 @@ class ManageNodes extends ManageRelatedRecords
                 //
             ])
             ->actions([
-                //
+                Tables\Actions\EditAction::make()
             ])
             ->bulkActions([
                 //
@@ -45,6 +51,14 @@ class ManageNodes extends ManageRelatedRecords
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name'),
+            ]);
     }
 
     protected function getHeaderActions(): array

@@ -43,6 +43,7 @@ class ExperimentResource extends Resource
         return $page->generateNavigationItems([
             Pages\EditExperiment::class,
             Pages\ViewMetrics::class,
+            Pages\ViewTimeSeries::class,
             Pages\ManageNodes::class,
         ]);
     }
@@ -97,6 +98,7 @@ class ExperimentResource extends Resource
 
             'metrics' => Pages\ViewMetrics::route('/{record}/metrics'),
             'nodes' => Pages\ManageNodes::route('/{record}/nodes'),
+            'time-series' => Pages\ViewTimeSeries::route('/{record}/time-series'),
         ];
     }
 

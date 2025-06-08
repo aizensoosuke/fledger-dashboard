@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataPointController;
 use App\Http\Controllers\ExperimentController;
 use App\Http\Controllers\NodeController;
 use Illuminate\Http\Request;
@@ -15,9 +16,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('experiments', ExperimentController::class)
         ->only(['store']);
     Route::resource('experiments.nodes', NodeController::class)
-        ->scoped([
-            'experiment' => 'id',
-            'node' => 'name',
-        ])
+        ->shallow()
         ->only(['store', 'update']);
+    Route::resource('nodes.data-points', DataPointController::class)
+        ->shallow()
+        ->only(['store']);
 });

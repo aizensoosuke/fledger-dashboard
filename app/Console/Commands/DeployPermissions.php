@@ -10,26 +10,36 @@ use Spatie\Permission\PermissionRegistrar;
 
 class DeployPermissions extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'deploy:permissions';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $description = 'Deploy permissions for the application';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $models = collect([
+            'user',
+            'experiment',
+            'node',
+            'data point',
+        ]);
+
+        $customPermissions = collect([
+            'access filament',
+        ]);
+
+        $adminExceptions = collect([
+            //
+        ]);
+
+        $runnerPermissions = collect([
+            'create experiments',
+            'create nodes',
+            'create data points',
+
+            'update nodes',
+        ]);
 
         $base = collect([
             'create',
@@ -44,12 +54,6 @@ class DeployPermissions extends Command
             'view any',
         ]);
 
-        $models = collect([
-            'user',
-            'experiment',
-            'node',
-        ]);
-
         $modelPermissions =
             $base->crossJoin($models->map(fn ($model) => str($model)->plural()))
                 ->mapSpread(fn ($base, $model) => ['name' => "{$base} {$model}", 'guard_name' => 'web']);
@@ -57,9 +61,8 @@ class DeployPermissions extends Command
             $baseSingular->crossJoin($models)
                 ->mapSpread(fn ($base, $model) => ['name' => "{$base} {$model}", 'guard_name' => 'web']);
 
-        $otherPermissions = collect([
-            'access filament',
-        ])->map(fn ($permission) => ['name' => $permission, 'guard_name' => 'web']);
+        $otherPermissions = $customPermissions
+            ->map(fn ($permission) => ['name' => $permission, 'guard_name' => 'web']);
 
         $allPermissions =
             $modelPermissions
@@ -71,15 +74,8 @@ class DeployPermissions extends Command
         $adminRole = Role::createOrFirst(['name' => 'admin']);
         $runnerRole = Role::createOrFirst(['name' => 'runner']);
 
-        $adminRole->syncPermissions(Permission::whereNotIn('name', [
-            //
-        ])->get());
-        $runnerRole->syncPermissions(Permission::whereIn('name', [
-            'create experiments',
-            'create nodes',
-
-            'update nodes',
-        ])->get());
+        $adminRole->syncPermissions(Permission::whereNotIn('name', $adminExceptions)->get());
+        $runnerRole->syncPermissions(Permission::whereIn('name', $runnerPermissions)->get());
 
         $admin = User::firstWhere('name', 'admin');
         if ($admin) {
