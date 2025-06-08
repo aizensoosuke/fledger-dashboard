@@ -28,10 +28,7 @@ class ViewMetrics extends ViewRecord
     {
         return [
             ExperimentResource\Widgets\SuccessVTimeoutChart::make(),
-            ExperimentResource\Widgets\TimelessSeriesChart::make([
-                'timelessSeriesName' => 'success',
-                'columnSpan' => 2,
-            ]),
+            ExperimentResource\Widgets\SuccessChart::make(),
             ExperimentResource\Widgets\PagesPropagationChart::make(),
         ];
     }
