@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\ExperimentResource\Pages;
 
+use App\Filament\Actions\ToLatestExperiment;
 use App\Filament\Resources\ExperimentResource;
-use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -28,15 +28,7 @@ class ViewMetrics extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('To lastest experiment')
-                ->outlined()
-                ->action(function () {
-                    $url = ExperimentResource::getUrl('metrics', [
-                        'record' => $this->record->latestExperiment(),
-                    ]);
-                    $this->redirect($url);
-                })
-                ->icon('heroicon-o-arrow-right'),
+            ToLatestExperiment::make(),
         ];
     }
 

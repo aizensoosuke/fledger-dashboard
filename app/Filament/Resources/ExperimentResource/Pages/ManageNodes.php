@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ExperimentResource\Pages;
 
+use App\Filament\Actions\ToLatestExperiment;
 use App\Filament\Resources\ExperimentResource;
 use App\Filament\Traits\HasResourceTitle;
 use Filament\Forms\Components\TextInput;
@@ -42,7 +43,7 @@ class ManageNodes extends ManageRelatedRecords
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 //
@@ -63,7 +64,7 @@ class ManageNodes extends ManageRelatedRecords
     protected function getHeaderActions(): array
     {
         return [
-            //
+            ToLatestExperiment::make(),
         ];
     }
 }
