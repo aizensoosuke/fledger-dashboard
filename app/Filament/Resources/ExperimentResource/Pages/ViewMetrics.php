@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ExperimentResource\Pages;
 
 use App\Filament\Actions\ToLatestExperiment;
 use App\Filament\Resources\ExperimentResource;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -15,14 +16,19 @@ class ViewMetrics extends ViewRecord
 
     protected static ?string $title = 'Metrics';
 
-    public function getHeaderWidgetsColumns(): int|string|array
+    public function getFooterWidgetsColumns(): int|string|array
     {
         return 4;
     }
 
     public function form(Form $form): Form
     {
-        return $form->schema([]);
+        return $form->schema([
+            TextInput::make('target_page_id')
+                ->label('Target Page ID')
+                ->placeholder(fn ($state) => $state->record->target_page_id ?? 'Waiting... Please refresh manually')
+                ->disabled(),
+        ]);
     }
 
     protected function getHeaderActions(): array
@@ -32,7 +38,7 @@ class ViewMetrics extends ViewRecord
         ];
     }
 
-    protected function getHeaderWidgets(): array
+    protected function getFooterWidgets(): array
     {
         return [
             ExperimentResource\Widgets\SuccessVTimeoutChart::make(),

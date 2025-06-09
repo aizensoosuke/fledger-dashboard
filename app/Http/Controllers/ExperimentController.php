@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Data\ExperimentData;
-use App\Data\PostExperimentData;
 use App\Models\Experiment;
 use Gate;
 use Illuminate\Http\Request;
-use function Filament\authorize;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExperimentController extends Controller
 {
@@ -33,7 +31,7 @@ class ExperimentController extends Controller
                     ? "fledger-n0$i-$j"
                     : "fledger-n$i-$j";
                 $experiment->nodes()->create([
-                    'name' => $instanceName
+                    'name' => $instanceName,
                 ]);
             }
         }
@@ -41,7 +39,36 @@ class ExperimentController extends Controller
         return response()->json(['id' => $experiment->id], 201);
     }
 
-    function end(Request $request, Experiment $experiment)
+    public function update(Request $request, Experiment $experiment)
+    {
+        Gate::authorize('update experiments');
+
+        $data = $request->validate([
+            'target_page_id' => 'string|max:255',
+        ]);
+
+        if (isset($data['target_page_id'])) {
+            $experiment->target_page_id = $data['target_page_id'];
+        }
+
+        $experiment->save();
+
+        return response('success', Response::HTTP_OK);
+
+    }
+
+    public function targetPageId(Request $request, Experiment $experiment)
+    {
+        Gate::authorize('view experiments');
+
+        if (! $experiment->target_page_id) {
+            return response()->json(['error' => 'Target page ID not set'], 404);
+        }
+
+        return response()->json(['target_page_id' => $experiment->target_page_id]);
+    }
+
+    public function end(Request $request, Experiment $experiment)
     {
         Gate::authorize('end experiments');
 

@@ -16,8 +16,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/experiments/{experiment}/end', [ExperimentController::class, 'end'])
         ->name('experiments.end');
+    Route::get('/experiments/{experiment}/target-page-id', [ExperimentController::class, 'targetPageId'])
+        ->name('experiments.target-page-id');
     Route::resource('experiments', ExperimentController::class)
-        ->only(['store']);
+        ->only(['store', 'update']);
 
     Route::resource('experiments.nodes', NodeController::class)
         ->shallow()

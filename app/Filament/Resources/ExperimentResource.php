@@ -3,12 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExperimentResource\Pages;
-use App\Filament\Resources\ExperimentResource\Widgets\FloValueSentChart;
-use App\Filament\Resources\ExperimentResource\Widgets\PagesPropagationChart;
-use App\Filament\Resources\ExperimentResource\Widgets\RequestFloMetasChart;
-use App\Filament\Resources\ExperimentResource\Widgets\SuccessVTimeoutChart;
 use App\Models\Experiment;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\SubNavigationPosition;
@@ -66,7 +61,7 @@ class ExperimentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id'),
-                    //->getStateUsing(fn (Experiment $experiment) => "Experiment #{$experiment->id}");
+                // ->getStateUsing(fn (Experiment $experiment) => "Experiment #{$experiment->id}");
 
                 TextColumn::make('name'),
             ])
