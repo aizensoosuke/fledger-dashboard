@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Data\ExperimentData;
-use App\Data\NodeData;
-use App\Data\PostNodeData;
+use App\Data\SimulationSnapshotData;
 use App\Models\Experiment;
 use App\Models\Node;
 use Gate;
@@ -33,22 +31,44 @@ class NodeController extends Controller
     {
         Gate::authorize('update nodes');
 
-        $data = $request->validate([
-            'pages' => 'string|max:16384|nullable',
-            'status' => 'string|in:active,success,timeout|nullable',
-        ]);
+        $data = SimulationSnapshotData::validateAndCreate($request);
 
-        if (isset($data['pages'])) {
-            $node->pages = str($data['pages'])->split('/,/');
-        }
+        $experiment = $node->experiment;
 
-        if (isset($data['status'])) {
-            $node->status = $data['status'];
-        }
+        $node->pages = $data->pages_stored ?? $node->pages;
+        $node->status = $data->node_status ?? $node->status;
+
+        $experiment->target_page_id = $data->target_page_id ?? $experiment->target_page_id;
 
         $node->save();
+        $experiment->save();
 
-        return response('success', Response::HTTP_OK);
+        $dataPoints = collect($data->timed_metrics)
+            ->map(function ($metric) use (&$node) {
+                return $node->dataPoints()->create([
+                    'name' => $metric[0],
+                    'value' => $metric[1],
+                    'time' => now()->floorSeconds(10),
+                ]);
+            });
 
+        $timelessDataPoints = collect($data->timeless_metrics)
+            ->map(function ($metric) use (&$node) {
+                return $node->timelessDataPoints()->updateOrCreate(
+                    ['name' => $metric[0]],
+                    ['value' => $metric[1]],
+                );
+            });
+
+        $response = [
+            'timed_data_points' => $dataPoints->pluck('id'),
+            'timeless_data_points' => $timelessDataPoints->pluck('id'),
+        ];
+
+        if ($node->experiment->target_page_id) {
+            $response['target_page_id'] = $node->experiment->target_page_id;
+        }
+
+        return response()->json($response, Response::HTTP_OK);
     }
 }

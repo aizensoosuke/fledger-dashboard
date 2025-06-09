@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ExperimentResource\Widgets;
 
 use App\Models\Experiment;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\WidgetConfiguration;
 
 class PagesPropagationChart extends ChartWidget
 {
@@ -12,7 +11,7 @@ class PagesPropagationChart extends ChartWidget
 
     public ?Experiment $record = null;
 
-    protected int | string | array $columnSpan = 2;
+    protected int|string|array $columnSpan = 2;
 
     protected function getData(): array
     {
@@ -24,6 +23,7 @@ class PagesPropagationChart extends ChartWidget
                 ->filter(fn ($node) => $node->pages && in_array($page, $node->pages))
                 ->count();
         });
+
         return [
             'datasets' => [
                 [
