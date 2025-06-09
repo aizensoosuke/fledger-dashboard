@@ -16,6 +16,11 @@ class Experiment extends Model
         'pages_amount',
     ];
 
+    public static function latestExperiment(): ?self
+    {
+        return self::orderBy('id', 'desc')->first();
+    }
+
     public function nodes(): HasMany
     {
         return $this->hasMany(Node::class);
