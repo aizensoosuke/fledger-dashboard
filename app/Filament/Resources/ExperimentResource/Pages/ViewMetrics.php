@@ -6,9 +6,9 @@ use App\Filament\Actions\ToLatestExperiment;
 use App\Filament\Resources\ExperimentResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Pages\EditRecord;
 
-class ViewMetrics extends ViewRecord
+class ViewMetrics extends EditRecord
 {
     protected static string $resource = ExperimentResource::class;
 
@@ -28,6 +28,7 @@ class ViewMetrics extends ViewRecord
                 ->label('Target Page ID')
                 ->placeholder(fn ($state) => $state->record->target_page_id ?? 'Waiting... Please refresh manually')
                 ->disabled(),
+            TextInput::make('summary'),
         ]);
     }
 

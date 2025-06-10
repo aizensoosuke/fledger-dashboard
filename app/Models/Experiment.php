@@ -14,6 +14,13 @@ class Experiment extends Model
     protected $fillable = [
         'name',
         'pages_amount',
+        'bookmarked',
+        'summary',
+        'description',
+    ];
+
+    protected $casts = [
+        'bookmarked' => 'boolean',
     ];
 
     public static function latestExperiment(): ?self

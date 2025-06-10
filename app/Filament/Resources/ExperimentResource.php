@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExperimentResource\Pages;
 use App\Models\Experiment;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
@@ -18,7 +20,8 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -53,6 +56,11 @@ class ExperimentResource extends Resource
                     ->disabled(),
                 TextInput::make('name')
                     ->disabled(),
+                Toggle::make('bookmarked')
+                    ->live()
+                    ->afterStateUpdated(fn ($state, Experiment $experiment) => $experiment->update(['bookmarked' => $state])),
+                TextInput::make('summary'),
+                MarkdownEditor::make('description'),
             ]);
     }
 
@@ -61,12 +69,19 @@ class ExperimentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id'),
-                // ->getStateUsing(fn (Experiment $experiment) => "Experiment #{$experiment->id}");
-
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->description(fn (Experiment $experiment) => $experiment->summary)
+                    ->grow(),
+                ToggleColumn::make('bookmarked')
+                    ->label('Bookmarked')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                Filter::make('bookmarked')
+                    ->label('Bookmarked only')
+                    ->toggle()
+                    ->query(fn (Builder $query, $state) => $query->where('bookmarked', $state)),
             ])
             ->actions([
                 EditAction::make()
