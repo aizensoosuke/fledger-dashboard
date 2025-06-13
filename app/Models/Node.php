@@ -22,6 +22,7 @@ class Node extends Model
         'name',
         'pages_stored',
         'target_pages',
+        'last_update_timestamp',
     ];
 
     public function experiment(): BelongsTo
@@ -44,6 +45,7 @@ class Node extends Model
         return [
             'pages_stored' => 'array',
             'target_pages' => 'array',
+            'last_update_timestamp' => 'datetime',
         ];
     }
 }

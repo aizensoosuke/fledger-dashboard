@@ -16,6 +16,8 @@ class ExperimentController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'pages_amount' => 'nullable|integer|min:0',
+            'filler_amount' => 'nullable|integer|min:0',
+            'target_amount' => 'nullable|integer|min:0',
             'nodes_amount' => 'nullable|integer|min:0',
             'instances_per_node' => 'nullable|integer|min:0',
         ]);
@@ -76,7 +78,7 @@ class ExperimentController extends Controller
             $node->target_pages = collect($data['target_pages'])
                 ->shuffle()
                 ->take(2)
-                ->pluck('id');
+                ->toArray();
             $node->save();
         });
 

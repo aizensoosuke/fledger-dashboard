@@ -12,7 +12,7 @@ add('shared_files', []);
 add('shared_dirs', []);
 add('writable_dirs', []);
 
-//set('writable_mode', 'skip');
+// set('writable_mode', 'skip');
 
 // Tasks
 task('deploy:info')->verbose();
@@ -25,7 +25,7 @@ task('npm:upload', function () {
     upload('public/build/', '{{release_path}}/public/build/');
 });
 task('horizon:restart', function () {
-    run('sudo systemctl restart horizon'.get('labels')['horizon-suffix']);
+    run('sudo supervisorctl restart horizon');
 });
 task('artisan:deploy:permissions', artisan('deploy:permissions'));
 task('artisan:deploy:scout', artisan('deploy:scout'));
@@ -33,9 +33,6 @@ task('artisan:deploy:scout', artisan('deploy:scout'));
 // Hosts
 
 host('production')
-//    ->setLabels([
-//        'horizon-suffix' => '@make-test',
-//    ])
     ->set('hostname', 'fledger-dashboard')
     ->set('branch', 'production')
     ->set('php_version', '8.3')
@@ -47,7 +44,7 @@ after('deploy:prepare', 'npm:build');
 after('npm:build', 'npm:upload');
 
 after('artisan:migrate', 'artisan:deploy:permissions');
-//after('artisan:deploy:permissions', 'artisan:deploy:scout');
+// after('artisan:deploy:permissions', 'artisan:deploy:scout');
 
-//after('deploy:success', 'horizon:restart');
+after('deploy:success', 'horizon:restart');
 after('deploy:failed', 'deploy:unlock');

@@ -17,7 +17,7 @@ class FillersPropagationChart extends ChartWidget
     {
         $experiment = $this->record;
 
-        $pages = collect(range(1, $experiment->filler_amount))->map(fn ($page) => "{$page}");
+        $pages = collect(range(1, $experiment->filler_amount))->map(fn ($page) => "filler-{$page}");
         $amounts = $pages->map(function ($page) use ($experiment) {
             return $experiment->nodes
                 ->filter(fn ($node) => $node->pages_stored && in_array($page, collect($node->pages_stored)->pluck('name')->toArray()))

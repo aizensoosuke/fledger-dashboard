@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Data\SimulationSnapshotData;
+use App\Jobs\NodeUpdateJob;
 use App\Models\Experiment;
 use App\Models\Node;
 use Gate;
@@ -32,50 +33,13 @@ class NodeController extends Controller
         Gate::authorize('update nodes');
 
         $data = SimulationSnapshotData::validateAndCreate($request);
+        $job = new NodeUpdateJob($node, $data, now());
+        dispatch($job);
 
-        $node->load(['dataPoints', 'timelessDataPoints', 'experiment']);
-        $experiment = $node->experiment;
-
-        $node->pages_stored = $data->pages_stored ?? $node->pages_stored;
-        $node->status = $data->node_status ?? $node->status;
-
-        $dataPoints = collect($data->timed_metrics)
-            ->map(function ($metric) use (&$node) {
-                return $node->dataPoints()->make([
-                    'name' => $metric[0],
-                    'value' => $metric[1],
-                    'time' => now()->floorSeconds(10),
-                ]);
-            })
-            ->all();
-        $node->dataPoints()->saveMany($dataPoints);
-
-        $timelessDataPoints = collect($data->timeless_metrics)
-            ->map(function ($metric) use (&$node) {
-                $tdp = $node->timelessDataPoints()->where('name', $metric[0])->first();
-                if ($tdp) {
-                    $tdp->value = $metric[1];
-
-                    return $tdp;
-                }
-
-                return $node->timelessDataPoints()->make([
-                    'name' => $metric[0],
-                    'value' => $metric[1],
-                ]);
-            })
-            ->all();
-        $node->timelessDataPoints()->saveMany($timelessDataPoints);
-
-        $node->save();
-        $experiment->save();
-
-        $targetPageIds = collect($node->experiment->target_pages)->pluck('id')->toArray();
-
+        $targetPageIds = collect($node->target_pages)->pluck('id')->toArray();
         $response = [
-            'timed_data_points' => collect($dataPoints)->pluck('id'),
-            'timeless_data_points' => collect($timelessDataPoints)->pluck('id'),
             'target_page_ids' => $targetPageIds,
+            'job_id' => $job->job?->getJobId(),
         ];
 
         return response()->json($response, Response::HTTP_OK);
