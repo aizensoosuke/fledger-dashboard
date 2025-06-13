@@ -28,6 +28,7 @@ class DeployPermissions extends Command
 
         $customPermissions = collect([
             'access filament',
+            'access pulse',
             'end experiments',
         ]);
 
