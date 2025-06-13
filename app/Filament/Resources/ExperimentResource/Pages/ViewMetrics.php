@@ -44,6 +44,7 @@ class ViewMetrics extends EditRecord
         return [
             ExperimentResource\Widgets\SuccessVTimeoutChart::make(),
             ExperimentResource\Widgets\SuccessChart::make(),
+            ExperimentResource\Widgets\FillersPropagationChart::make(),
             ExperimentResource\Widgets\PagesPropagationChart::make(),
             ExperimentResource\Widgets\TimelessSeriesChart::make([
                 'timelessSeriesName' => 'target_page_stored_bool',

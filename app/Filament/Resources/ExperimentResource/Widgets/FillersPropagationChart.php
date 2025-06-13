@@ -5,9 +5,9 @@ namespace App\Filament\Resources\ExperimentResource\Widgets;
 use App\Models\Experiment;
 use Filament\Widgets\ChartWidget;
 
-class PagesPropagationChart extends ChartWidget
+class FillersPropagationChart extends ChartWidget
 {
-    protected static ?string $heading = 'Pages Propagation (old)';
+    protected static ?string $heading = 'Fillers Propagation';
 
     public ?Experiment $record = null;
 
@@ -17,21 +17,21 @@ class PagesPropagationChart extends ChartWidget
     {
         $experiment = $this->record;
 
-        $pages = collect(range(1, $experiment->pages_amount))->map(fn ($page) => "{$page}");
+        $pages = collect(range(1, $experiment->filler_amount))->map(fn ($page) => "{$page}");
         $amounts = $pages->map(function ($page) use ($experiment) {
             return $experiment->nodes
-                ->filter(fn ($node) => $node->pages && in_array($page, $node->pages))
+                ->filter(fn ($node) => in_array($page, $node->floPages->pluck('name')->toArray()))
                 ->count();
         });
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Nodes storing page',
+                    'label' => 'Nodes storing filler page',
                     'data' => $amounts,
                 ],
             ],
-            'labels' => $pages->map(fn ($page) => "Page {$page}"),
+            'labels' => $pages->map(fn ($page) => "filler-{$page}"),
         ];
     }
 

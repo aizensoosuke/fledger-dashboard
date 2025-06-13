@@ -19,6 +19,8 @@ class Experiment extends Model
         'description',
         'ended_at',
         'target_page_id',
+        'filler_amount',
+        'target_amount',
     ];
 
     protected $casts = [
