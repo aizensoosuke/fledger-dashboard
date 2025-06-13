@@ -67,14 +67,20 @@ class ExperimentController extends Controller
             'target_pages.*.name' => 'required|string|max:255',
         ]);
 
-        foreach ($data['target_pages'] as $page) {
-            $experiment->targetFloPages()->firstOrCreate(
-                ['flo_id' => $page['id']],
-                ['name' => $page['name'], 'experiment_id' => $experiment->id],
-            );
-        }
+        $experiment->target_pages = $data['target_pages'];
+        $experiment->save();
 
-        return response()->json(['target_pages' => $experiment->targetFloPages()->pluck('flo_id')], 201);
+        $experiment->load('nodes');
+
+        $experiment->nodes()->each(function ($node) use ($data) {
+            $node->target_pages = collect($data['target_pages'])
+                ->shuffle()
+                ->take(2)
+                ->pluck('id');
+            $node->save();
+        });
+
+        return response()->json(['target_pages' => collect($experiment->target_pages)->pluck('id')], 201);
     }
 
     public function end(Request $request, Experiment $experiment)

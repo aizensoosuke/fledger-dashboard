@@ -13,18 +13,20 @@ class Experiment extends Model
 
     protected $fillable = [
         'name',
-        'pages_amount',
+        'pages_amount', // legacy (backwards compatibility)
         'bookmarked',
         'summary',
         'description',
         'ended_at',
-        'target_page_id',
+        'target_page_id', // legacy (backwards compatibility)
         'filler_amount',
         'target_amount',
+        'target_pages',
     ];
 
     protected $casts = [
         'bookmarked' => 'boolean',
+        'target_pages' => 'array',
     ];
 
     public static function latestExperiment(): ?self
@@ -35,20 +37,5 @@ class Experiment extends Model
     public function nodes(): HasMany
     {
         return $this->hasMany(Node::class);
-    }
-
-    public function targetFloPages(): HasMany
-    {
-        return $this->hasMany(FloPage::class, 'target_in_experiment_id');
-    }
-
-    public function fillerFloPages(): HasMany
-    {
-        return $this->hasMany(FloPage::class, 'filler_in_experiment_id');
-    }
-
-    public function floPages(): HasMany
-    {
-        return $this->hasMany(FloPage::class);
     }
 }

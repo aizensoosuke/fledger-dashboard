@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,7 +20,8 @@ class Node extends Model
 
     protected $fillable = [
         'name',
-        'pages',
+        'pages_stored',
+        'target_pages',
     ];
 
     public function experiment(): BelongsTo
@@ -39,15 +39,11 @@ class Node extends Model
         return $this->hasMany(TimelessDataPoint::class);
     }
 
-    public function floPages(): BelongsToMany
-    {
-        return $this->belongsToMany(FloPage::class);
-    }
-
     protected function casts(): array
     {
         return [
-            'pages' => 'array',
+            'pages_stored' => 'array',
+            'target_pages' => 'array',
         ];
     }
 }

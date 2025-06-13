@@ -20,7 +20,7 @@ class PagesPropagationChart extends ChartWidget
         $pages = collect(range(1, $experiment->pages_amount))->map(fn ($page) => "{$page}");
         $amounts = $pages->map(function ($page) use ($experiment) {
             return $experiment->nodes
-                ->filter(fn ($node) => $node->pages && in_array($page, $node->pages))
+                ->filter(fn ($node) => $node->pages_stored && in_array($page, collect($node->pages_stored)->pluck('name')->toArray()))
                 ->count();
         });
 

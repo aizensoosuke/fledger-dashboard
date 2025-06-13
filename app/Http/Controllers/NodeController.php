@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Data\FloPageData;
 use App\Data\SimulationSnapshotData;
 use App\Models\Experiment;
 use App\Models\Node;
@@ -34,43 +33,48 @@ class NodeController extends Controller
 
         $data = SimulationSnapshotData::validateAndCreate($request);
 
+        $node->load(['dataPoints', 'timelessDataPoints', 'experiment']);
         $experiment = $node->experiment;
 
-        $node->pages = $data->pages_stored ?? $node->pages;
+        $node->pages_stored = $data->pages_stored ?? $node->pages_stored;
         $node->status = $data->node_status ?? $node->status;
-
-        $data->pages_stored->each(function (FloPageData $page) use ($node) {
-            $node->floPages()->firstOrCreate(
-                ['flo_id' => $page->id],
-                ['name' => $page->name, 'experiment_id' => $node->experiment_id],
-            );
-        });
-
-        $node->save();
-        $experiment->save();
 
         $dataPoints = collect($data->timed_metrics)
             ->map(function ($metric) use (&$node) {
-                return $node->dataPoints()->create([
+                return $node->dataPoints()->make([
                     'name' => $metric[0],
                     'value' => $metric[1],
                     'time' => now()->floorSeconds(10),
                 ]);
-            });
+            })
+            ->all();
+        $node->dataPoints()->saveMany($dataPoints);
 
         $timelessDataPoints = collect($data->timeless_metrics)
             ->map(function ($metric) use (&$node) {
-                return $node->timelessDataPoints()->updateOrCreate(
-                    ['name' => $metric[0]],
-                    ['value' => $metric[1]],
-                );
-            });
+                $tdp = $node->timelessDataPoints()->where('name', $metric[0])->first();
+                if ($tdp) {
+                    $tdp->value = $metric[1];
 
-        $targetPageIds = $experiment->targetFloPages()->inRandomOrder()->take(2)->pluck('flo_id');
+                    return $tdp;
+                }
+
+                return $node->timelessDataPoints()->make([
+                    'name' => $metric[0],
+                    'value' => $metric[1],
+                ]);
+            })
+            ->all();
+        $node->timelessDataPoints()->saveMany($timelessDataPoints);
+
+        $node->save();
+        $experiment->save();
+
+        $targetPageIds = collect($node->experiment->target_pages)->pluck('id')->toArray();
 
         $response = [
-            'timed_data_points' => $dataPoints->pluck('id'),
-            'timeless_data_points' => $timelessDataPoints->pluck('id'),
+            'timed_data_points' => collect($dataPoints)->pluck('id'),
+            'timeless_data_points' => collect($timelessDataPoints)->pluck('id'),
             'target_page_ids' => $targetPageIds,
         ];
 

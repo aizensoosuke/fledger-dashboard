@@ -20,7 +20,7 @@ class FillersPropagationChart extends ChartWidget
         $pages = collect(range(1, $experiment->filler_amount))->map(fn ($page) => "{$page}");
         $amounts = $pages->map(function ($page) use ($experiment) {
             return $experiment->nodes
-                ->filter(fn ($node) => in_array($page, $node->floPages->pluck('name')->toArray()))
+                ->filter(fn ($node) => $node->pages_stored && in_array($page, collect($node->pages_stored)->pluck('name')->toArray()))
                 ->count();
         });
 
