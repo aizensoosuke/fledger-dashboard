@@ -22,11 +22,15 @@ class Experiment extends Model
         'filler_amount',
         'target_amount',
         'target_pages',
+        'targets_per_node',
     ];
 
     protected $casts = [
         'bookmarked' => 'boolean',
         'target_pages' => 'array',
+        'filler_amount' => 'integer',
+        'target_amount' => 'integer',
+        'targets_per_node' => 'integer',
     ];
 
     public static function latestExperiment(): ?self

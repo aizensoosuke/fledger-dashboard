@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class PagesPropagationChart extends ChartWidget
 {
-    protected static ?string $heading = 'Pages Propagation (old)';
+    protected static ?string $heading = 'Pages Propagation (legacy)';
 
     public ?Experiment $record = null;
 

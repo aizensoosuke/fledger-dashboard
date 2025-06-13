@@ -18,6 +18,7 @@ class ExperimentController extends Controller
             'pages_amount' => 'nullable|integer|min:0',
             'filler_amount' => 'nullable|integer|min:0',
             'target_amount' => 'nullable|integer|min:0',
+            'targets_per_node' => 'nullable|integer|min:0',
             'nodes_amount' => 'nullable|integer|min:0',
             'instances_per_node' => 'nullable|integer|min:0',
         ]);
@@ -77,7 +78,7 @@ class ExperimentController extends Controller
         $experiment->nodes()->each(function ($node) use ($data) {
             $node->target_pages = collect($data['target_pages'])
                 ->shuffle()
-                ->take(2)
+                ->take($experiment->targets_per_node ?? 2)
                 ->toArray();
             $node->save();
         });
