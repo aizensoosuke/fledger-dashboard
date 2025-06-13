@@ -15,16 +15,19 @@ class FetchSuccessRateAmongBenevolent extends ChartWidget
     protected function getData(): array
     {
         $experiment = $this->record;
+        $experiment->load(['nodes', 'nodes.timelessDataPoints']);
 
-        $amountBenevolent = $experiment->nodes()
+        $amountBenevolent = $experiment->nodes
             ->where('evil_noforward', false)
             ->count();
         $totalExpected = $amountBenevolent * $experiment->targets_per_node;
-        $totalFetched = $experiment->nodes()->where('evil_noforward', false)->get()->map(function ($node) {
-            return $node->timelessDataPoints()
-                ->where('name', 'target_successfully_fetched_total')
-                ->sum('value');
-        })->sum();
+        $totalFetched = $experiment->nodes
+            ->where('evil_noforward', false)
+            ->map(function ($node) {
+                return $node->timelessDataPoints
+                    ->where('name', 'target_successfully_fetched_total')
+                    ->sum('value');
+            })->sum();
 
         return [
             'datasets' => [

@@ -48,7 +48,7 @@ class ViewMetrics extends EditRecord
             ExperimentResource\Widgets\FillersPropagationChart::make(),
             ExperimentResource\Widgets\TargetPropagationChart::make(),
             ExperimentResource\Widgets\TimelessSeriesChart::make([
-                'timelessSeriesName' => 'target_page_successfully_stored_total',
+                'timelessSeriesName' => 'target_successfully_fetched_total',
             ]),
 
             ExperimentResource\Widgets\PagesPropagationChart::make(),

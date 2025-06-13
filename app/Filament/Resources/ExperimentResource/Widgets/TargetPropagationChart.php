@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ExperimentResource\Widgets;
 
 use App\Models\Experiment;
+use App\Models\Node;
 use Filament\Widgets\ChartWidget;
 
 class TargetPropagationChart extends ChartWidget
@@ -17,22 +18,48 @@ class TargetPropagationChart extends ChartWidget
     {
         $experiment = $this->record;
 
-        $pages = collect(range(1, $experiment->target_amount))->map(fn ($page) => "target-{$page}");
-        $amounts = $pages->map(function ($page) use ($experiment) {
-            return $experiment->nodes
-                ->filter(fn ($node) => $node->pages_stored && in_array($page, collect($node->pages_stored)->pluck('name')->toArray()))
+        $pages = collect(range(0, $experiment->target_amount - 1))->map(fn ($page) => "target-{$page}");
+        $benevolentNodesStoringPages = $pages->map(function ($page) use ($experiment) {
+            return $experiment->nodes()
+                ->where('evil_noforward', false)
+                ->get()
+                ->filter(fn ($node) => $this->isPageStoredInNode($node, $page))
+                ->count();
+        });
+
+        $evilNodesStoringPages = $pages->map(function ($page) use ($experiment) {
+            return $experiment->nodes()
+                ->where('evil_noforward', true)
+                ->get()
+                ->filter(fn ($node) => $this->isPageStoredInNode($node, $page))
                 ->count();
         });
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Nodes storing target page',
-                    'data' => $amounts,
+                    'label' => 'Benevolent nodes storing target page',
+                    'data' => $benevolentNodesStoringPages->toArray(),
+                ],
+                [
+                    'label' => 'Evil nodes storing target page',
+                    'data' => $evilNodesStoringPages->toArray(),
+                    'backgroundColor' => '#953620',
                 ],
             ],
             'labels' => $pages->map(fn ($page) => "{$page}"),
         ];
+    }
+
+    private function isPageStoredInNode(Node $node, string $page): bool
+    {
+        if ($node->pages_stored == null) {
+            return false;
+        }
+
+        $pagesStored = collect($node->pages_stored)->pluck('name')->toArray();
+
+        return in_array($page, $pagesStored);
     }
 
     protected function getType(): string

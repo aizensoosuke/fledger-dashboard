@@ -23,7 +23,7 @@ class SuccessVTimeoutChart extends ChartWidget
                 [
                     'label' => $this->getHeading(),
                     'data' => [
-                        $experiment->nodes()->where('', Node::STATUS_SUCCESS)->count(),
+                        $experiment->nodes()->where('status', Node::STATUS_SUCCESS)->count(),
                         $experiment->nodes()->where('status', Node::STATUS_TIMEOUT)->count(),
                     ],
                 ],
