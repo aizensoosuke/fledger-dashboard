@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ExperimentResource\Widgets;
 use App\Models\Experiment;
 use App\Models\Node;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\WidgetConfiguration;
 
 class SuccessVTimeoutChart extends ChartWidget
 {
@@ -13,7 +12,7 @@ class SuccessVTimeoutChart extends ChartWidget
 
     public ?Experiment $record = null;
 
-    protected int | string | array $columnSpan = 1;
+    protected int|string|array $columnSpan = 1;
 
     protected function getData(): array
     {
@@ -24,9 +23,9 @@ class SuccessVTimeoutChart extends ChartWidget
                 [
                     'label' => $this->getHeading(),
                     'data' => [
-                        $experiment->nodes()->where('status', Node::STATUS_SUCCESS)->count(),
+                        $experiment->nodes()->where('', Node::STATUS_SUCCESS)->count(),
                         $experiment->nodes()->where('status', Node::STATUS_TIMEOUT)->count(),
-                    ]
+                    ],
                 ],
             ],
             'labels' => [

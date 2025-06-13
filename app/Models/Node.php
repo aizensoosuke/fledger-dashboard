@@ -23,6 +23,7 @@ class Node extends Model
         'pages_stored',
         'target_pages',
         'last_update_timestamp',
+        'evil_noforward',
     ];
 
     public function experiment(): BelongsTo
@@ -46,6 +47,7 @@ class Node extends Model
             'pages_stored' => 'array',
             'target_pages' => 'array',
             'last_update_timestamp' => 'datetime',
+            'evil_noforward' => 'boolean',
         ];
     }
 }

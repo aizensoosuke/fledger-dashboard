@@ -45,6 +45,7 @@ class NodeUpdateJob implements ShouldQueue
 
         $node->pages_stored = $data->pages_stored ?? $node->pages_stored;
         $node->status = $data->node_status ?? $node->status;
+        $node->evil_noforward = $data->evil_no_forward ?? $node->evil_noforward;
 
         $dataPoints = collect($data->timed_metrics)
             ->map(function ($metric) use (&$node, $dispatchedAt) {
