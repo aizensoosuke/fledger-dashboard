@@ -57,15 +57,24 @@ class ExperimentController extends Controller
 
     }
 
-    public function targetPageId(Request $request, Experiment $experiment)
+    public function storeTargetPages(Request $request, Experiment $experiment)
     {
-        Gate::authorize('view experiments');
+        Gate::authorize('update experiments');
 
-        if (! $experiment->target_page_id) {
-            return response()->json(['error' => 'Target page ID not set'], 404);
+        $data = $request->validate([
+            'target_pages' => 'array|max:1024|min:1',
+            'target_pages.*.id' => 'required|string|max:255',
+            'target_pages.*.name' => 'required|string|max:255',
+        ]);
+
+        foreach ($data['target_pages'] as $page) {
+            $experiment->targetFloPages()->firstOrCreate(
+                ['flo_id' => $page['id']],
+                ['name' => $page['name'], 'experiment_id' => $experiment->id],
+            );
         }
 
-        return response()->json(['target_page_id' => $experiment->target_page_id]);
+        return response()->json(['target_pages' => $experiment->targetFloPages()->pluck('flo_id')], 201);
     }
 
     public function end(Request $request, Experiment $experiment)

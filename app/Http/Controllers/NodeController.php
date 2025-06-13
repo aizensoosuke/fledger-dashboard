@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\FloPageData;
 use App\Data\SimulationSnapshotData;
 use App\Models\Experiment;
 use App\Models\Node;
@@ -38,7 +39,12 @@ class NodeController extends Controller
         $node->pages = $data->pages_stored ?? $node->pages;
         $node->status = $data->node_status ?? $node->status;
 
-        $experiment->target_page_id = $data->target_page_id ?? $experiment->target_page_id;
+        $data->pages_stored->each(function (FloPageData $page) use ($node) {
+            $node->floPages()->firstOrCreate(
+                ['flo_id' => $page->id],
+                ['name' => $page->name, 'experiment_id' => $node->experiment_id],
+            );
+        });
 
         $node->save();
         $experiment->save();
@@ -60,14 +66,13 @@ class NodeController extends Controller
                 );
             });
 
+        $targetPageIds = $experiment->targetFloPages()->inRandomOrder()->take(2)->pluck('flo_id');
+
         $response = [
             'timed_data_points' => $dataPoints->pluck('id'),
             'timeless_data_points' => $timelessDataPoints->pluck('id'),
+            'target_page_ids' => $targetPageIds,
         ];
-
-        if ($node->experiment->target_page_id) {
-            $response['target_page_id'] = $node->experiment->target_page_id;
-        }
 
         return response()->json($response, Response::HTTP_OK);
     }

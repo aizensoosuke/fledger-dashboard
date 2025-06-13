@@ -2,6 +2,8 @@
 
 namespace App\Data;
 
+use Illuminate\Support\Collection;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Support\Validation\ValidationContext;
 
@@ -9,7 +11,9 @@ class SimulationSnapshotData extends Data
 {
     public function __construct(
         public ?string $node_status,
-        public ?array $pages_stored,
+        #[DataCollectionOf(FloPageData::class)]
+        /** @var Collection<FloPageData> $pages_stored */
+        public Collection $pages_stored,
         public ?bool $evil_no_forward,
         public ?string $target_page_id = null,
         public array $timed_metrics = [],
@@ -20,14 +24,6 @@ class SimulationSnapshotData extends Data
     {
         return [
             'node_status' => [
-                'string',
-                'max:255',
-            ],
-            'pages' => [
-                'array',
-                'max:4096',
-            ],
-            'pages.*' => [
                 'string',
                 'max:255',
             ],

@@ -17,6 +17,8 @@ class Experiment extends Model
         'bookmarked',
         'summary',
         'description',
+        'ended_at',
+        'target_page_id',
     ];
 
     protected $casts = [
@@ -31,5 +33,20 @@ class Experiment extends Model
     public function nodes(): HasMany
     {
         return $this->hasMany(Node::class);
+    }
+
+    public function targetFloPages(): HasMany
+    {
+        return $this->hasMany(FloPage::class, 'target_in_experiment_id');
+    }
+
+    public function fillerFloPages(): HasMany
+    {
+        return $this->hasMany(FloPage::class, 'filler_in_experiment_id');
+    }
+
+    public function floPages(): HasMany
+    {
+        return $this->hasMany(FloPage::class);
     }
 }
