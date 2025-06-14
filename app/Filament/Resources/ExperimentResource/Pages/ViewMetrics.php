@@ -4,17 +4,26 @@ namespace App\Filament\Resources\ExperimentResource\Pages;
 
 use App\Filament\Actions\ToLatestExperiment;
 use App\Filament\Resources\ExperimentResource;
+use App\Filament\Traits\HasResourceSubheading;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ViewMetrics extends EditRecord
 {
+    use HasResourceSubheading;
+
     protected static string $resource = ExperimentResource::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-sparkles';
 
     protected static ?string $title = 'Metrics';
+
+    public function getSubheading(): string|Htmlable|null
+    {
+        return $this->record->infoLine();
+    }
 
     public function getFooterWidgetsColumns(): int|string|array
     {
@@ -24,10 +33,6 @@ class ViewMetrics extends EditRecord
     public function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('target_page_id')
-                ->label('Target Page ID')
-                ->placeholder(fn ($state) => $state->record->target_page_id ?? 'Waiting... Please refresh manually')
-                ->disabled(),
             TextInput::make('summary'),
         ]);
     }

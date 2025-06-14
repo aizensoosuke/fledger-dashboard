@@ -31,11 +31,53 @@ class Experiment extends Model
         'filler_amount' => 'integer',
         'target_amount' => 'integer',
         'targets_per_node' => 'integer',
+        'ended_at' => 'datetime',
     ];
 
     public static function latestExperiment(): ?self
     {
         return self::orderBy('id', 'desc')->first();
+    }
+
+    public function infoLine(): string
+    {
+        $fetchSuccessRate = $this->fetchSuccessRate() * 100;
+        $duration = $this->ended_at
+            ? $this->ended_at->shortAbsoluteDiffForHumans($this->created_at, 2)
+            : 'Ongoing';
+        $evilCount = $this->nodes->where('evil_noforward', true)->count();
+        $evilPercentage = $this->nodes->count() > 0
+            ? round($evilCount / $this->nodes->count() * 100)
+            : 0;
+
+        return collect([
+            "{$duration}",
+            "{$fetchSuccessRate}% f-success",
+            "{$this->nodes->count()} nodes",
+            "{$evilPercentage}% evil",
+            "{$this->filler_amount} fillers",
+            "{$this->targets_per_node}/{$this->target_amount} targets",
+        ])->join(' | ');
+    }
+
+    public function fetchSuccessRate(): float
+    {
+        $this->load('nodes', 'nodes.timelessDataPoints');
+        $amountBenevolent = $this->nodes
+            ->where('evil_noforward', false)
+            ->count();
+        $totalExpected = $amountBenevolent * $this->targets_per_node;
+        $totalFetched = $this->nodes
+            ->where('evil_noforward', false)
+            ->map(function ($node) {
+                return $node->timelessDataPoints
+                    ->where('name', 'target_successfully_fetched_total')
+                    ->sum('value');
+            })->sum();
+
+        $rate = $totalExpected > 0 ? $totalFetched / $totalExpected : 0;
+
+        return round($rate, 2);
     }
 
     public function nodes(): HasMany

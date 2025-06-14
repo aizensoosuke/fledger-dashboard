@@ -20,6 +20,7 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -47,6 +48,11 @@ class ExperimentResource extends Resource
         ]);
     }
 
+    public static function getSubheading(Experiment $experiment): string
+    {
+        return $experiment->infoLine();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -70,7 +76,8 @@ class ExperimentResource extends Resource
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('name')
-                    ->description(fn (Experiment $experiment) => $experiment->summary)
+                    ->description(fn (Experiment $experiment) => $experiment->infoLine()),
+                TextInputColumn::make('summary')
                     ->grow(),
                 ToggleColumn::make('bookmarked')
                     ->label('Bookmarked')

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Traits;
 
-trait HasResourceTitle
+trait HasResourceSubheading
 {
     public function getSubheading(): ?string
     {
         $resource = static::getResource();
 
-        return $resource::getRecordTitle($this->record);
+        return $resource::getSubheading($this->record);
     }
 }
