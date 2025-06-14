@@ -88,7 +88,7 @@ class Experiment extends Model
         $propagatedTargetIds = collect($targetIds)->filter(function ($targetId) {
             return $this->nodes
                 ->where('evil_noforward', false)
-                ->search(function ($node) use ($targetId) {
+                ->firstWhere(function ($node) use ($targetId) {
                     $storedIds = collect($node->pages_stored)->pluck('id');
 
                     return collect($storedIds)->contains($targetId);

@@ -73,16 +73,6 @@ class ExperimentController extends Controller
         $experiment->target_pages = $data['target_pages'];
         $experiment->save();
 
-        $experiment->load('nodes');
-
-        $experiment->nodes()->each(function ($node) use ($data) {
-            $node->target_pages = collect($data['target_pages'])
-                ->shuffle()
-                ->take($experiment->targets_per_node ?? 2)
-                ->toArray();
-            $node->save();
-        });
-
         return response()->json(['target_pages' => collect($experiment->target_pages)->pluck('id')], 201);
     }
 
@@ -91,6 +81,23 @@ class ExperimentController extends Controller
         Gate::authorize('view experiments');
 
         return response()->json(['lost_target_pages' => $experiment->lostTargetPages()]);
+    }
+
+    public function startFetching(Request $request, Experiment $experiment)
+    {
+        Gate::authorize('update experiments');
+
+        $experiment->load('nodes');
+
+        $experiment->nodes()->each(function ($node) use ($experiment) {
+            $node->target_pages = collect($experiment->target_pages)
+                ->shuffle()
+                ->take($experiment->targets_per_node)
+                ->toArray();
+            $node->save();
+        });
+
+        return response('success', 200);
     }
 
     public function end(Request $request, Experiment $experiment)
