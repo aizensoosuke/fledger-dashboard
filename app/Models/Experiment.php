@@ -80,6 +80,25 @@ class Experiment extends Model
         return round($rate, 2);
     }
 
+    public function lostTargetPages(): array
+    {
+        $this->load(['nodes']);
+        $targetIds = collect($this->target_pages)->pluck('id');
+
+        $propagatedTargetIds = collect($targetIds)->filter(function ($targetId) {
+            return $this->nodes
+                ->where('evil_noforward', false)
+                ->search(function ($node) use ($targetId) {
+                    $storedIds = collect($node->pages_stored)->pluck('id');
+
+                    return collect($storedIds)->contains($targetId);
+                });
+        });
+        $lostTargetIds = collect($targetIds)->diff($propagatedTargetIds)->values();
+
+        return $lostTargetIds->toArray();
+    }
+
     public function nodes(): HasMany
     {
         return $this->hasMany(Node::class);

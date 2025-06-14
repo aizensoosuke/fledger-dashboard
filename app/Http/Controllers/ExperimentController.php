@@ -86,6 +86,13 @@ class ExperimentController extends Controller
         return response()->json(['target_pages' => collect($experiment->target_pages)->pluck('id')], 201);
     }
 
+    public function lostTargetPages(Request $request, Experiment $experiment)
+    {
+        Gate::authorize('view experiments');
+
+        return response()->json(['lost_target_pages' => $experiment->lostTargetPages()]);
+    }
+
     public function end(Request $request, Experiment $experiment)
     {
         Gate::authorize('end experiments');

@@ -16,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('experiments.end');
     Route::post('/experiments/{experiment}/store-target-pages', [ExperimentController::class, 'storeTargetPages'])
         ->name('experiments.store-target-page');
+    Route::get('/experiments/{experiment}/lost-target-pages', [ExperimentController::class, 'lostTargetPages'])
+        ->name('experiments.lost-target-page');
     Route::resource('experiments', ExperimentController::class)
         ->only(['store', 'update']);
 
