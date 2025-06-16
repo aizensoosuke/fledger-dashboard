@@ -42,16 +42,20 @@ class Experiment extends Model
     public function infoLine(): string
     {
         $fetchSuccessRate = $this->fetchSuccessRate() * 100;
+        $state = $this->ended_at
+            ? 'Ended'
+            : 'Ongoing';
         $duration = $this->ended_at
             ? $this->ended_at->shortAbsoluteDiffForHumans($this->created_at, 2)
-            : 'Ongoing';
+            : $this->created_at->shortAbsoluteDiffForHumans(now(), 2);
         $evilCount = $this->nodes->where('evil_noforward', true)->count();
         $evilPercentage = $this->nodes->count() > 0
             ? round($evilCount / $this->nodes->count() * 100)
             : 0;
 
         return collect([
-            "{$duration}",
+            $state,
+            $duration,
             "{$fetchSuccessRate}% f-success",
             "{$this->nodes->count()} nodes",
             "{$evilPercentage}% evil",
