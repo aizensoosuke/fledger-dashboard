@@ -10,25 +10,31 @@ set('repository', 'git@github.com:aizensoosuke/fledger-dashboard');
 
 add('shared_files', []);
 add('shared_dirs', []);
-add('writable_dirs', []);
+add('writable_dirs', ['caddy']);
 
 // set('writable_mode', 'skip');
 
 // Tasks
 task('deploy:info')->verbose();
 
-task('npm:build', function () {
-    runLocally('npm run build');
-});
-task('npm:upload', function () {
-    run('mkdir -p {{release_path}}/public/build');
-    upload('public/build/', '{{release_path}}/public/build/');
-});
-task('horizon:restart', function () {
-    run('sudo supervisorctl restart horizon');
-});
+task(
+    'npm:build',
+    function () {
+        runLocally('npm run build');
+    }
+);
+task(
+    'npm:upload',
+    function () {
+        run('mkdir -p {{release_path}}/public/build');
+        upload('public/build/', '{{release_path}}/public/build/');
+    }
+);
 task('artisan:deploy:permissions', artisan('deploy:permissions'));
 task('artisan:deploy:scout', artisan('deploy:scout'));
+
+task('horizon:restart', fn () => run('sudo supervisorctl restart horizon'));
+task('octane:restart', fn () => run('sudo systemctl restart octane@fledger'));
 
 // Hosts
 
@@ -40,11 +46,16 @@ host('production')
 
 // Hooks
 
-after('deploy:prepare', 'npm:build');
-after('npm:build', 'npm:upload');
+task('deploy:prepare')
+    ->addAfter('npm:build')
+    ->addAfter('npm:upload');
 
-after('artisan:migrate', 'artisan:deploy:permissions');
-// after('artisan:deploy:permissions', 'artisan:deploy:scout');
+task('artisan:migrate')
+    // ->addAfter('artisan:deploy:scout')
+    ->addAfter('artisan:deploy:permissions');
 
-after('deploy:success', 'horizon:restart');
+task('deploy:success')
+    ->addAfter('octane:restart')
+    ->addAfter('horizon:restart');
+
 after('deploy:failed', 'deploy:unlock');
