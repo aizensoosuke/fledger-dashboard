@@ -41,7 +41,12 @@ class Experiment extends Model
 
     public function infoLine(): string
     {
+        $this->load('nodes');
+
         $fetchSuccessRate = $this->fetchSuccessRate() * 100;
+        $fetchesTotal = $this->nodes
+            ->map(fn (Node $node) => $node->timelessDataPoints->where('name', 'fetch_requests_total')->sum('value'))
+            ->sum();
         $state = $this->ended_at
             ? 'Ended'
             : 'Ongoing';
@@ -58,6 +63,7 @@ class Experiment extends Model
             $state,
             $duration,
             "{$fetchSuccessRate}% f-success",
+            "{$fetchesTotal} fetches",
             "{$this->nodes->count()} nodes",
             "{$evilPercentage}% evil",
             "{$this->filler_amount} fillers",
